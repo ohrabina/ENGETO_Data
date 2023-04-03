@@ -43,6 +43,15 @@ ORDER BY
 	payroll_quarter
 )
 
+CREATE TEMPORARY TABLE gdp(
+SELECT 
+	country,
+	`year` AS GDP_year,
+	GDP
+FROM economies e 
+WHERE country = 'Czech Republic'
+)
+
 SELECT 
 	tp.name,
 	tp.avg_price,
@@ -53,10 +62,13 @@ SELECT
 	tv.avg_pay,
 	tv.currency,
 	tv.branch,
-	e.GDP
+	gdp.GDP
 FROM temp_prices AS tp
 JOIN temp_vages AS tv ON tp.price_year = tv.payroll_year AND tp.qtr = tv.payroll_quarter
-JOIN economies e ON tp.price_year = e.`year`
-WHERE e.country = 'Czech Republic'
+JOIN gdp ON gdp.GDP_year = tv.payroll_year
+ORDER BY 
+	branch,
+	price_year,
+	qtr
 
 
