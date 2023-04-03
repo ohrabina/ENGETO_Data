@@ -52,6 +52,7 @@ FROM economies e
 WHERE country = 'Czech Republic'
 )
 
+CREATE TABLE t_ondrej_hrabina_project_SQL_primary_final (
 SELECT 
 	tp.name,
 	tp.avg_price,
@@ -70,5 +71,5 @@ ORDER BY
 	branch,
 	price_year,
 	qtr
-
+)
 
