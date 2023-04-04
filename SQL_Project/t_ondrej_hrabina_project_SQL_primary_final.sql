@@ -4,11 +4,12 @@ SELECT
 	ROUND(AVG(cp.value), 2) AS avg_price,
 	cpc.price_value AS unit_value,
 	cpc.price_unit AS unit,
-	YEAR cp.date_from AS price_year,
+	YEAR(cp.date_from) AS price_year,
 	quarter(date_from) AS qtr
 FROM czechia_price AS cp 
-JOIN czechia_price_category AS cpc ON cp.category_code = cpc.code
-JOIN czechia_region AS cr ON cp.region_code = cr.code
+LEFT JOIN czechia_price_category AS cpc ON cp.category_code = cpc.code
+LEFT JOIN czechia_region AS cr ON cp.region_code = cr.code
+WHERE region_code IS NULL
 GROUP BY 
 	name,
 	price_year,
@@ -28,10 +29,10 @@ SELECT
 	cpib.name AS branch,
 	cpvt.name AS job_type
 FROM czechia_payroll cp
-JOIN czechia_payroll_industry_branch cpib ON cp.industry_branch_code = cpib.code 
-JOIN czechia_payroll_calculation cpc ON cp.unit_code = cpc.code 
-JOIN czechia_payroll_value_type cpvt ON cp.value_type_code = cpvt.code
-JOIN czechia_payroll_unit cpu ON cp.unit_code = cpu.code
+LEFT JOIN czechia_payroll_industry_branch cpib ON cp.industry_branch_code = cpib.code 
+LEFT JOIN czechia_payroll_calculation cpc ON cp.unit_code = cpc.code 
+LEFT JOIN czechia_payroll_value_type cpvt ON cp.value_type_code = cpvt.code
+LEFT JOIN czechia_payroll_unit cpu ON cp.unit_code = cpu.code
 WHERE cpvt.code = '5958'
 GROUP BY 
 	branch,
