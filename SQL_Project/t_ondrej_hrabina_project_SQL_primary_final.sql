@@ -4,7 +4,7 @@ SELECT
 	ROUND(AVG(cp.value), 2) AS avg_price,
 	cpc.price_value AS unit_value,
 	cpc.price_unit AS unit,
-	date_format(cp.date_from, '%Y') AS price_year,
+	YEAR cp.date_from AS price_year,
 	quarter(date_from) AS qtr
 FROM czechia_price AS cp 
 JOIN czechia_price_category AS cpc ON cp.category_code = cpc.code
@@ -23,8 +23,8 @@ CREATE TEMPORARY TABLE temp_vages (
 SELECT 
 	avg(value) AS avg_pay,
 	cpu.name AS currency,
-	payroll_year,
-	payroll_quarter,
+	payroll_year AS py,
+	payroll_quarter AS pq,
 	cpib.name AS branch,
 	cpvt.name AS job_type
 FROM czechia_payroll cp
@@ -35,12 +35,12 @@ JOIN czechia_payroll_unit cpu ON cp.unit_code = cpu.code
 WHERE cpvt.code = '5958'
 GROUP BY 
 	branch,
-	payroll_year, 
-	payroll_quarter 
+	py, 
+	pq 
 ORDER BY 
 	branch,
-	payroll_year,
-	payroll_quarter
+	py,
+	pq
 )
 
 CREATE TEMPORARY TABLE gdp(
@@ -65,8 +65,8 @@ SELECT
 	tv.branch,
 	gdp.GDP
 FROM temp_prices AS tp
-JOIN temp_vages AS tv ON tp.price_year = tv.payroll_year AND tp.qtr = tv.payroll_quarter
-JOIN gdp ON gdp.GDP_year = tv.payroll_year
+LEFT JOIN temp_vages AS tv ON tp.price_year = tv.payroll_year AND tp.qtr = tv.payroll_quarter
+LEFT JOIN gdp ON gdp.GDP_year = tv.payroll_year
 ORDER BY 
 	branch,
 	price_year,
