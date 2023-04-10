@@ -61,8 +61,8 @@ SELECT
 	tv.branch,
 	gdp.GDP
 FROM temp_prices AS tp
-LEFT JOIN temp_vages AS tv ON tp.price_year = tv.payroll_year 
-LEFT JOIN gdp ON gdp.GDP_year = tv.payroll_year
+LEFT JOIN temp_vages AS tv ON tp.price_year = tv.py 
+LEFT JOIN gdp ON gdp.GDP_year = tv.py
 ORDER BY 
 	branch,
 	price_year
