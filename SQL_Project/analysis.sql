@@ -38,7 +38,29 @@ GROUP BY
 	name,
 	price_year 
 
--- Third question - Which food categhory has the lowest price increase(year price rise in %)?
+-- Third question - Which food category has the lowest price increase(year price rise in %)?
 -- grow rate = ((last/first)^1/n) - 1
-	
-	
+
+CREATE TEMPORARY TABLE food_per_year(
+SELECT 
+	name,
+	AVG(avg_price) AS av_price,
+	price_year 
+FROM t_ondrej_hrabina_project_sql_primary_final AS tpf
+GROUP BY 
+	name,
+	price_year 
+)	
+
+SELECT 
+	fpy.name AS food,
+	fpy.av_price AS 2006_price,
+	fpy2.av_price AS 2007_price,
+	fpy3.av_price AS 2008_price
+FROM food_per_year AS fpy
+JOIN food_per_year AS fpy2 ON fpy.price_year = fpy2.price_year + 1 AND fpy.name = fpy2.name
+JOIN food_per_year AS fpy3 ON fpy.price_year = fpy3.price_year + 2 AND fpy.name = fpy3.name
+
+
+
+
