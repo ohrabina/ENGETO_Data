@@ -53,13 +53,12 @@ GROUP BY
 )	
 
 SELECT 
-	fpy.name AS food,
-	fpy.av_price AS 2006_price,
-	fpy2.av_price AS 2007_price,
-	fpy3.av_price AS 2008_price
+	name,
+	av_price,
+	round(((av_price / (LAG(av_price,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2) AS perc_dif,
+	price_year
 FROM food_per_year AS fpy
-JOIN food_per_year AS fpy2 ON fpy.price_year = fpy2.price_year + 1 AND fpy.name = fpy2.name
-JOIN food_per_year AS fpy3 ON fpy.price_year = fpy3.price_year + 2 AND fpy.name = fpy3.name
+
 
 
 
