@@ -60,6 +60,15 @@ SELECT
 FROM food_per_year AS fpy
 
 
+-- Fourth question - Does exist a year where an increase of food price is higher than increase of wages?
 
+SELECT 
+	name,
+	branch,
+	price_year, 
+	avg_price,
+	avg_pay
+FROM t_ondrej_hrabina_project_sql_primary_final AS tpf
+ORDER BY name
 
 
