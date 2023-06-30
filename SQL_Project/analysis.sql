@@ -102,13 +102,18 @@ SELECT
 	name,
 	branch,
 	price_year AS inv_year,
-	perc_dif_price AS pdpr,
-	perc_dif_pay AS pdpa
+	perc_dif_price AS ceny,
+	perc_dif_pay AS plat,
+	CASE 
+		WHEN perc_dif_price > 10 AND  perc_dif_pay < 10 THEN 1
+		ELSE 0
+	END AS pay_vs_price
 FROM diff_price AS dpr
 LEFT JOIN diff_pay AS dpa ON dpr.price_year = dpa.pay_year
 ORDER BY 
+	pay_vs_price DESC, 
 	name,
 	branch,
-	price_year
+	inv_year
 
 
