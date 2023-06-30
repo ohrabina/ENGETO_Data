@@ -61,14 +61,54 @@ FROM food_per_year AS fpy
 
 
 -- Fourth question - Does exist a year where an increase of food price is higher than increase of wages?
-
+CREATE TEMPORARY TABLE average_price(
 SELECT 
 	name,
-	branch,
 	price_year, 
-	avg_price,
-	avg_pay
+	AVG(avg_price) AS av_price
 FROM t_ondrej_hrabina_project_sql_primary_final AS tpf
-ORDER BY name
+GROUP BY 
+	name,
+	price_year
+)
+
+CREATE TEMPORARY TABLE average_pay(	
+SELECT 
+	DISTINCT branch,
+	avg_pay,
+	price_year 
+FROM t_ondrej_hrabina_project_sql_primary_final AS tpf
+)
+
+CREATE TEMPORARY TABLE diff_price(
+SELECT 
+	name,
+	av_price,
+	round(((av_price / (LAG(av_price,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2) AS perc_dif_price,
+	price_year
+FROM average_price
+)
+
+CREATE TEMPORARY TABLE diff_pay(
+SELECT 
+	branch,
+	avg_pay,
+	round(((avg_pay / (LAG(avg_pay,1) OVER (PARTITION BY branch ORDER BY price_year )))- 1)*100 ,2) AS perc_dif_pay,
+	price_year AS pay_year
+FROM average_pay
+)
+
+SELECT
+	name,
+	branch,
+	price_year AS inv_year,
+	perc_dif_price AS pdpr,
+	perc_dif_pay AS pdpa
+FROM diff_price AS dpr
+LEFT JOIN diff_pay AS dpa ON dpr.price_year = dpa.pay_year
+ORDER BY 
+	name,
+	branch,
+	price_year
 
 
