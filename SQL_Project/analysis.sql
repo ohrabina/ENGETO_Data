@@ -116,4 +116,67 @@ ORDER BY
 	branch,
 	inv_year
 
+-- Fifth question -- are prices and wages dependent on rice or decrease of HDP?
 
+CREATE TEMPORARY TABLE hdp_per_year(	
+SELECT 
+	price_year AS hdp_year, 
+	AVG(GDP) AS HDP
+FROM t_ondrej_hrabina_project_sql_primary_final AS tpf
+GROUP BY 
+	price_year
+)
+
+CREATE TEMPORARY TABLE average_price(
+SELECT 
+	name,
+	price_year, 
+	AVG(avg_price) AS av_price
+FROM t_ondrej_hrabina_project_sql_primary_final AS tpf
+GROUP BY 
+	name,
+	price_year
+)
+
+CREATE TEMPORARY TABLE average_pay(	
+SELECT 
+	DISTINCT branch,
+	avg_pay,
+	price_year 
+FROM t_ondrej_hrabina_project_sql_primary_final AS tpf
+)
+
+CREATE TEMPORARY TABLE diff_price(
+SELECT 
+	name,
+	av_price,
+	round(((av_price / (LAG(av_price,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2) AS perc_dif_price,
+	price_year
+FROM average_price
+)
+
+CREATE TEMPORARY TABLE diff_pay(
+SELECT 
+	branch,
+	avg_pay,
+	round(((avg_pay / (LAG(avg_pay,1) OVER (PARTITION BY branch ORDER BY price_year )))- 1)*100 ,2) AS perc_dif_pay,
+	price_year AS pay_year
+FROM average_pay
+)
+
+SELECT
+	name,
+	branch,
+	price_year,
+	perc_dif_price,
+	perc_dif_pay,
+	HDP
+FROM diff_price AS dpr
+LEFT JOIN diff_pay AS dpa ON dpr.price_year = dpa.pay_year
+LEFT JOIN hdp_per_year AS hpy ON dpr.price_year = hpy.hdp_year
+ORDER BY 
+	name,
+	branch,
+	price_year
+
+	
