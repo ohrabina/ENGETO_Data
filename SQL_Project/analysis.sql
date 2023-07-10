@@ -188,7 +188,7 @@ SELECT
 	name,
 	price_year,
 	perc_dif_price,
-	round(((HDP / (LAG(HDP,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2) AS perc_dif_HDP,
+	COALESCE (round(((HDP / (LAG(HDP,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2),0) AS perc_dif_HDP,
 	HDP
 FROM diff_price AS dpr
 LEFT JOIN hdp_per_year AS hpy ON dpr.price_year = hpy.hdp_year
