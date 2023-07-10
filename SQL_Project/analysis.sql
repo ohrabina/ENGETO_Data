@@ -186,17 +186,25 @@ FROM average_pay
 
 SELECT
 	name,
-	branch,
 	price_year,
 	perc_dif_price,
-	perc_dif_pay,
+	round(((HDP / (LAG(HDP,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2) AS perc_dif_HDP,
 	HDP
 FROM diff_price AS dpr
-LEFT JOIN diff_pay AS dpa ON dpr.price_year = dpa.pay_year
 LEFT JOIN hdp_per_year AS hpy ON dpr.price_year = hpy.hdp_year
 ORDER BY 
 	name,
-	branch,
 	price_year
 
+SELECT
+	branch,
+	pay_year,
+	perc_dif_pay,
+	round(((HDP / (LAG(HDP,1) OVER (PARTITION BY branch ORDER BY pay_year )))- 1)*100 ,2) AS perc_dif_HDP,
+	HDP
+FROM diff_pay AS dpa
+LEFT JOIN hdp_per_year AS hpy ON dpa.pay_year = hpy.hdp_year
+ORDER BY 
+	branch,
+	pay_year
 	
