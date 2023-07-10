@@ -52,14 +52,24 @@ GROUP BY
 	price_year 
 )	
 
+CREATE TEMPORARY TABLE perc_diff_price(
 SELECT 
 	name,
 	av_price,
-	round(((av_price / (LAG(av_price,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2) AS perc_dif,
+	COALESCE(round(((av_price / (LAG(av_price,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2), 0) AS perc_diff,
 	price_year
 FROM food_per_year AS fpy
+)
 
-
+SELECT
+	name,
+	sum(perc_diff) AS dif
+FROM perc_diff_price
+GROUP BY
+	name
+ORDER BY
+	dif 
+	
 -- Fourth question - Does exist a year where an increase of food price is higher than increase of wages?
 CREATE TEMPORARY TABLE average_price(
 SELECT 
@@ -98,6 +108,7 @@ SELECT
 FROM average_pay
 )
 
+CREATE TEMPORARY TABLE year_sup(
 SELECT
 	name,
 	branch,
@@ -107,13 +118,22 @@ SELECT
 	CASE 
 		WHEN perc_dif_price > 10 AND  perc_dif_pay < 10 THEN 1
 		ELSE 0
-	END AS pay_vs_price
+	END AS pay_vs_price 
 FROM diff_price AS dpr
 LEFT JOIN diff_pay AS dpa ON dpr.price_year = dpa.pay_year
 ORDER BY 
 	pay_vs_price DESC, 
 	name,
 	branch,
+	inv_year
+)
+
+SELECT
+	DISTINCT inv_year
+FROM year_sup
+WHERE
+	pay_vs_price = 1
+ORDER BY 
 	inv_year
 
 -- Fifth question -- are prices and wages dependent on rice or decrease of HDP?
@@ -150,7 +170,7 @@ CREATE TEMPORARY TABLE diff_price(
 SELECT 
 	name,
 	av_price,
-	round(((av_price / (LAG(av_price,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2) AS perc_dif_price,
+	COALESCE (round(((av_price / (LAG(av_price,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2),0) AS perc_dif_price,
 	price_year
 FROM average_price
 )
@@ -159,7 +179,7 @@ CREATE TEMPORARY TABLE diff_pay(
 SELECT 
 	branch,
 	avg_pay,
-	round(((avg_pay / (LAG(avg_pay,1) OVER (PARTITION BY branch ORDER BY price_year )))- 1)*100 ,2) AS perc_dif_pay,
+	COALESCE (round(((avg_pay / (LAG(avg_pay,1) OVER (PARTITION BY branch ORDER BY price_year )))- 1)*100 ,2),0) AS perc_dif_pay,
 	price_year AS pay_year
 FROM average_pay
 )
