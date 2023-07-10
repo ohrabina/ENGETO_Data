@@ -9,7 +9,6 @@ t_ondrej_hrabina_project_SQL_primary_final.sql -> this file is used for creation
 t_ondrej_hrabina_project_sql_secondary_final.sql -> this file is used for create of table which contains all data for EU countries
 
 analysis.sql -> in this file could be found SQL queries used for finding the test answers
-supporting_data.xlsx -> supprting data for project visualisation - graphs, tables, etc.....
 
 1st Question: Does during examined years pay rise?
 Answer: yes, in all branches pays rise, wher min is in 2006 and max in 2018
