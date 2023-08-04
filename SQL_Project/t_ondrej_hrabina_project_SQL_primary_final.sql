@@ -8,7 +8,7 @@ SELECT
 FROM czechia_price AS cp 
 LEFT JOIN czechia_price_category AS cpc ON cp.category_code = cpc.code
 LEFT JOIN czechia_region AS cr ON cp.region_code = cr.code
-WHERE region_code is NOT NULL
+WHERE region_code IS NOT NULL
 -- if region code is NULL I can not be sure if it is republic AVG or "just" missing value, there fore I am not usig these rows
 GROUP BY 
 	name,
