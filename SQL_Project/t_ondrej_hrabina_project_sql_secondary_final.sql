@@ -18,7 +18,7 @@ SELECT
 FROM eu_countries AS euc
 JOIN economies AS ec ON euc.country = ec.country
 -- WHERE gini IS NOT NULL AND taxes IS NOT NULL AND fertility IS NOT NULL and GDP IN NOT NULL
-WHERE 2005<ec.`year` AND ec.`year` < 2019
+WHERE 2005 < ec.`year` AND ec.`year` < 2019
 ORDER BY 
 	euc.country,
 	GDP_year
