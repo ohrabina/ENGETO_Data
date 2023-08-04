@@ -27,12 +27,12 @@ SELECT
 	unit_value,
 	unit,
 	price_year,
-	round(AVG(avg_pay)) AS pay_per_year,
-	round(round(AVG(avg_pay))/avg_price) AS amount,
+	ROUND(AVG(avg_pay)) AS pay_per_year,
+	ROUND(ROUND(AVG(avg_pay))/avg_price) AS amount,
 	unit AS unit_2
 FROM t_ondrej_hrabina_project_sql_primary_final AS tpf
 WHERE 
-	(name = 'Chléb konzumní kmínový' or name = 'Mléko polotučné pasterované') AND 
+	(name = 'Chléb konzumní kmínový' OR name = 'Mléko polotučné pasterované') AND 
 	(price_year = '2006' OR price_year = '2018')
 GROUP BY
 	name,
@@ -56,14 +56,14 @@ CREATE TEMPORARY TABLE perc_diff_price(
 SELECT 
 	name,
 	av_price,
-	COALESCE(round(((av_price / (LAG(av_price,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2), 0) AS perc_diff,
+	COALESCE(ROUND(((av_price / (LAG(av_price,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2), 0) AS perc_diff,
 	price_year
 FROM food_per_year AS fpy
 )
 
 SELECT
 	name,
-	sum(perc_diff) AS dif
+	SUM(perc_diff) AS dif
 FROM perc_diff_price
 GROUP BY
 	name
@@ -94,7 +94,7 @@ CREATE TEMPORARY TABLE diff_price(
 SELECT 
 	name,
 	av_price,
-	round(((av_price / (LAG(av_price,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2) AS perc_dif_price,
+	ROUND(((av_price / (LAG(av_price,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2) AS perc_dif_price,
 	price_year
 FROM average_price
 )
@@ -103,7 +103,7 @@ CREATE TEMPORARY TABLE diff_pay(
 SELECT 
 	branch,
 	avg_pay,
-	round(((avg_pay / (LAG(avg_pay,1) OVER (PARTITION BY branch ORDER BY price_year )))- 1)*100 ,2) AS perc_dif_pay,
+	ROUND(((avg_pay / (LAG(avg_pay,1) OVER (PARTITION BY branch ORDER BY price_year )))- 1)*100 ,2) AS perc_dif_pay,
 	price_year AS pay_year
 FROM average_pay
 )
@@ -170,7 +170,7 @@ CREATE TEMPORARY TABLE diff_price(
 SELECT 
 	name,
 	av_price,
-	COALESCE (round(((av_price / (LAG(av_price,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2),0) AS perc_dif_price,
+	COALESCE (ROUND(((av_price / (LAG(av_price,1) OVER (PARTITION BY name ORDER BY price_year )))- 1) * 100 ,2),0) AS perc_dif_price,
 	price_year
 FROM average_price
 )
@@ -179,7 +179,7 @@ CREATE TEMPORARY TABLE diff_pay(
 SELECT 
 	branch,
 	avg_pay,
-	COALESCE (round(((avg_pay / (LAG(avg_pay,1) OVER (PARTITION BY branch ORDER BY price_year )))- 1)*100 ,2),0) AS perc_dif_pay,
+	COALESCE (ROUND(((avg_pay / (LAG(avg_pay,1) OVER (PARTITION BY branch ORDER BY price_year )))- 1) * 100 ,2),0) AS perc_dif_pay,
 	price_year AS pay_year
 FROM average_pay
 )
@@ -188,7 +188,7 @@ SELECT
 	name,
 	price_year,
 	perc_dif_price,
-	COALESCE (round(((HDP / (LAG(HDP,1) OVER (PARTITION BY name ORDER BY price_year )))- 1)*100 ,2),0) AS perc_dif_HDP,
+	COALESCE (ROUND(((HDP / (LAG(HDP,1) OVER (PARTITION BY name ORDER BY price_year )))- 1) * 100 ,2),0) AS perc_dif_HDP,
 	HDP
 FROM diff_price AS dpr
 LEFT JOIN hdp_per_year AS hpy ON dpr.price_year = hpy.hdp_year
@@ -200,7 +200,7 @@ SELECT
 	branch,
 	pay_year,
 	perc_dif_pay,
-	round(((HDP / (LAG(HDP,1) OVER (PARTITION BY branch ORDER BY pay_year )))- 1)*100 ,2) AS perc_dif_HDP,
+	ROUND(((HDP / (LAG(HDP,1) OVER (PARTITION BY branch ORDER BY pay_year )))- 1) * 100 ,2) AS perc_dif_HDP,
 	HDP
 FROM diff_pay AS dpa
 LEFT JOIN hdp_per_year AS hpy ON dpa.pay_year = hpy.hdp_year
