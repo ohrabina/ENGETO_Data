@@ -11,7 +11,7 @@ t_ondrej_hrabina_project_sql_secondary_final.sql -> this file is used for creati
 analysis.sql -> in this file could be found SQL queries used for finding the test answers.
 
 1st Question: Does during examined years pay rise?
-Answer: yes, in all branches pays rise, where min is in 2006 and max in 2018
+Answer: Overall trend of pays is rising, where min is in 2006 and max in 2018 (supporting data in excel). But in this trend are years in which pay dropped.
 
 2nd Question: How many liters of milk and how many kilograms of bread one can buy in first and last investigated period.
 Answer: During this question it is not specified if differentiation based on branches is need, therefore an average pay was used as marker
