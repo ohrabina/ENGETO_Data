@@ -20,6 +20,54 @@ JOIN t_ondrej_hrabina_project_sql_primary_final AS tpf2 ON min_max.max_pay = tpf
 GROUP BY 
 	branch
 
+CREATE TEMPORARY TABLE av_pay(
+SELECT 
+	branch,
+	ROUND(AVG(avg_pay)) AS pay_per_year,
+	price_year AS pay_year
+FROM 
+	t_ondrej_hrabina_project_sql_primary_final AS tpf
+GROUP BY
+	branch,
+	pay_year
+ORDER BY 
+	branch,
+	pay_year
+)	
+
+CREATE TEMPORARY TABLE pay_diff(
+SELECT 
+	branch,
+	pay_per_year,
+	COALESCE (pay_per_year - LAG(pay_per_year,1) OVER (PARTITION BY branch ORDER BY pay_year ),0) AS diff,
+	pay_year
+FROM 
+	av_pay AS ap
+)
+
+CREATE TEMPORARY TABLE rod(
+SELECT
+	branch,
+	pay_year,
+	pay_per_year,
+	CASE 
+		WHEN diff < 0 THEN 1
+		ELSE 0
+	END AS rise_or_drop
+FROM 
+	pay_diff
+)
+
+SELECT
+	branch,
+	pay_year
+FROM rod
+WHERE 
+	rise_or_drop = 1
+ORDER BY 
+	branch,
+	pay_year
+	
 -- Second question - how many l/kg of milk/bread one can buy in first and last comparable period?
 SELECT 
 	name,
